@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:locale" content="en_US">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-从零开始的CV项目实战——Datawhale视觉夏令营学习笔记1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/07/22/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84CV%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94Datawhale%E8%A7%86%E8%A7%89%E5%A4%8F%E4%BB%A4%E8%90%A5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/" class="article-date">
+  <time class="dt-published" datetime="2023-07-22T12:04:18.999Z" itemprop="datePublished">2023-07-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>所有Baseline代码均来自<a target="_blank" rel="noopener" href="https://datawhaler.feishu.cn/docx/GYg7dZEPQozhXHx8n4ScQlwZnzd">Datawhale Baseline Docs</a></li>
+</ul>
+<h1 id="传统CV-Baseline解析"><a href="#传统CV-Baseline解析" class="headerlink" title="传统CV_Baseline解析"></a>传统CV_Baseline解析</h1><h2 id="数据准备和预处理"><a href="#数据准备和预处理" class="headerlink" title="数据准备和预处理"></a>数据准备和预处理</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> glob                <span class="comment"># 获取文件路径</span></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> nibabel <span class="keyword">as</span> nib      <span class="comment"># 处理医学图像数据</span></span><br><span class="line"><span class="keyword">from</span> nibabel.viewers <span class="keyword">import</span> OrthoSlicer3D    <span class="comment"># 图像可视化</span></span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> Counter              <span class="comment"># 计数统计</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取训练集文件路径</span></span><br><span class="line">train_path = glob.glob(<span class="string">&#x27;./脑PET图像分析和疾病预测挑战赛数据集/Train/*/*&#x27;</span>)</span><br><span class="line">test_path = glob.glob(<span class="string">&#x27;./脑PET图像分析和疾病预测挑战赛数据集/Test/*&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打乱训练集和测试集的顺序</span></span><br><span class="line">np.random.shuffle(train_path)</span><br><span class="line">np.random.shuffle(test_path)</span><br></pre></td></tr></table></figure>
+<h3 id="要点：glob模块的使用"><a href="#要点：glob模块的使用" class="headerlink" title="要点：glob模块的使用"></a>要点：glob模块的使用</h3><p>在数据集的读取中，glob模块常用于解析数据集的数据路径，配合<code>*?[]</code>三种通配符进行使用：</p>
+<ul>
+<li><p><code>*</code> 匹配0 个或多个字符（标准的正则表达式是匹配前一项内容0次或多次；）</p>
+</li>
+<li><p><code>?</code> 匹配单个字符；</p>
+</li>
+<li><p><code>[]</code>匹配指定范围内的字符，如：[0-9]匹配数字，[a-z]匹配字母；</p>
+</li>
+<li><p><code>[seq]</code> 匹配任何在 seq 中的字符；</p>
+</li>
+<li><p><code>[!seq]</code> 匹配任何不在 seq 中的字符。<br>glob使用示例：<br>假设示例目录如下：</p>
+</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">|-- dir</span><br><span class="line">    |-- file1.txt </span><br><span class="line">    |-- file2.txt </span><br><span class="line">    |-- filea.txt</span><br><span class="line">    |-- fileb.txt</span><br><span class="line">    |-- subdir</span><br><span class="line">        |-- subfile.txt</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>匹配所有文件</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> glob</span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> glob.glob(<span class="string">&#x27;dir/*&#x27;</span>):</span><br><span class="line">    <span class="built_in">print</span>(name)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Output</span></span><br><span class="line"><span class="built_in">dir</span>/file1.txt</span><br><span class="line"><span class="built_in">dir</span>/file2.txt</span><br><span class="line"><span class="built_in">dir</span>/filea.txt</span><br><span class="line"><span class="built_in">dir</span>/fileb.txt</span><br><span class="line"><span class="built_in">dir</span>/subdir</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>单字节通配符匹配</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> glob.glob(<span class="string">&#x27;dir/file?.txt&#x27;</span>):</span><br><span class="line">    <span class="built_in">print</span>(name)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Output</span></span><br><span class="line"><span class="built_in">dir</span>/file1.txt</span><br><span class="line"><span class="built_in">dir</span>/file2.txt</span><br><span class="line"><span class="built_in">dir</span>/filea.txt</span><br><span class="line"><span class="built_in">dir</span>/fileb.txt</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>字符区间匹配</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># method 1</span></span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> glob.glob(<span class="string">&#x27;dir/*[0-9].*&#x27;</span>):</span><br><span class="line">    <span class="built_in">print</span>(name)</span><br><span class="line"></span><br><span class="line"><span class="comment"># method 2</span></span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> glob.glob(<span class="string">&#x27;dir/*[12].*&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(name)</span><br><span class="line"></span><br><span class="line"><span class="comment"># method 3</span></span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> glob.glob(<span class="string">&#x27;dir/*[!ab].*&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(name)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 三种方法等价</span></span><br><span class="line"><span class="string">&quot;&quot;&quot; Output</span></span><br><span class="line"><span class="string">dir/file1.txt</span></span><br><span class="line"><span class="string">dir/file2.txt</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+<h2 id="特征提取"><a href="#特征提取" class="headerlink" title="特征提取"></a>特征提取</h2><p><code>extract_feature</code>函数从文件路径加载PET图像数据，并从中随机选择10个通道。然后，它计算了一系列统计特征，如非零像素数量、零像素数量、平均值、标准差等。最后，函数根据文件路径判断样本类别，并将提取到的特征和类别作为返回值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">extract_feature</span>(<span class="params">path</span>):  </span><br><span class="line"><span class="comment"># 加载PET图像数据  </span></span><br><span class="line">img = nib.load(path)  </span><br><span class="line"><span class="comment"># 获取第一个通道的数据  </span></span><br><span class="line">img = img.dataobj[:, :, :, <span class="number">0</span>] <span class="comment"># 单通道三维图  </span></span><br><span class="line">  </span><br><span class="line"><span class="comment"># 随机筛选其中的10个通道提取特征，将切片数视作channel  </span></span><br><span class="line">random_img = img[:, :, np.random.choice(<span class="built_in">range</span>(img.shape[<span class="number">2</span>]), <span class="number">10</span>)] <span class="comment"># [128, 128, 10]  </span></span><br><span class="line">  </span><br><span class="line"><span class="comment"># 对图片计算统计值  </span></span><br><span class="line">feat = [  </span><br><span class="line">(random_img != <span class="number">0</span>).<span class="built_in">sum</span>(), <span class="comment"># 非零像素的数量  </span></span><br><span class="line">(random_img == <span class="number">0</span>).<span class="built_in">sum</span>(), <span class="comment"># 零像素的数量  </span></span><br><span class="line">random_img.mean(), <span class="comment"># 平均值  </span></span><br><span class="line">random_img.std(), <span class="comment"># 标准差  </span></span><br><span class="line"><span class="built_in">len</span>(np.where(random_img.mean(<span class="number">0</span>))[<span class="number">0</span>]), <span class="comment"># 在列方向上平均值不为零的数量  </span></span><br><span class="line"><span class="built_in">len</span>(np.where(random_img.mean(<span class="number">1</span>))[<span class="number">0</span>]), <span class="comment"># 在行方向上平均值不为零的数量  </span></span><br><span class="line">random_img.mean(<span class="number">0</span>).<span class="built_in">max</span>(), <span class="comment"># 列方向上的最大平均值  </span></span><br><span class="line">random_img.mean(<span class="number">1</span>).<span class="built_in">max</span>() <span class="comment"># 行方向上的最大平均值  </span></span><br><span class="line">]  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 根据路径判断样本类别（&#x27;NC&#x27;表示正常，&#x27;MCI&#x27;表示异常）  </span></span><br><span class="line"><span class="keyword">if</span> <span class="string">&#x27;NC&#x27;</span> <span class="keyword">in</span> path:  </span><br><span class="line"><span class="keyword">return</span> feat + [<span class="string">&#x27;NC&#x27;</span>]  </span><br><span class="line"><span class="keyword">else</span>:  </span><br><span class="line"><span class="keyword">return</span> feat + [<span class="string">&#x27;MCI&#x27;</span>]  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 对训练集进行30次特征提取，每次提取后的特征以及类别（&#x27;NC&#x27;表示正常，&#x27;MCI&#x27;表示异常）被添加到train_feat列表中。  </span></span><br><span class="line">train_feat = []  </span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">30</span>):  </span><br><span class="line"><span class="keyword">for</span> path <span class="keyword">in</span> train_path:  </span><br><span class="line">train_feat.append(extract_feature(path))  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 对测试集进行30次特征提取，相当于随机切片的次数，</span></span><br><span class="line">test_feat = []  </span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">30</span>):  </span><br><span class="line"><span class="keyword">for</span> path <span class="keyword">in</span> test_path:  </span><br><span class="line">test_feat.append(extract_feature(path))  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 使用训练集的特征作为输入，训练集的类别作为输出，对逻辑回归模型进行训练。 </span></span><br><span class="line"><span class="comment"># R(dim=1500,8)-&gt;R(1500,1)</span></span><br><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression  </span><br><span class="line">m = LogisticRegression(max_iter=<span class="number">1000</span>)  </span><br><span class="line">m.fit(  </span><br><span class="line">np.array(train_feat)[:, :-<span class="number">1</span>].astype(np.float32), <span class="comment"># 特征  </span></span><br><span class="line">np.array(train_feat)[:, -<span class="number">1</span>] <span class="comment"># 类别  </span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h2 id="投票预测"><a href="#投票预测" class="headerlink" title="投票预测"></a>投票预测</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 对测试集进行预测并进行转置操作，使得每个样本有30次预测结果。  </span></span><br><span class="line">test_pred = m.predict(np.array(test_feat)[:, :-<span class="number">1</span>].astype(np.float32))  </span><br><span class="line">test_pred = test_pred.reshape(<span class="number">50</span>, -<span class="number">1</span>).T  <span class="comment"># 根据特征提取次数修改</span></span><br><span class="line">  </span><br><span class="line"><span class="comment"># 对每个样本的30次预测结果进行投票，选出最多的类别作为该样本的最终预测类别，存储在test_pred_label列表中。  </span></span><br><span class="line">test_pred_label = [Counter(x).most_common(<span class="number">1</span>)[<span class="number">0</span>][<span class="number">0</span>] <span class="keyword">for</span> x <span class="keyword">in</span> test_pred]  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 生成提交结果的DataFrame，其中包括样本ID和预测类别。  </span></span><br><span class="line">submit = pd.DataFrame(  </span><br><span class="line">&#123;  </span><br><span class="line"><span class="string">&#x27;uuid&#x27;</span>: [<span class="built_in">int</span>(x.split(<span class="string">&#x27;\\&#x27;</span>)[-<span class="number">1</span>][:-<span class="number">4</span>]) <span class="keyword">for</span> x <span class="keyword">in</span> test_path], <span class="comment"># 提取测试集文件名中的ID  </span></span><br><span class="line"><span class="string">&#x27;label&#x27;</span>: test_pred_label <span class="comment"># 预测的类别  </span></span><br><span class="line">&#125;  </span><br><span class="line">)  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># 按照ID对结果排序并保存为CSV文件  </span></span><br><span class="line">submit = submit.sort_values(by=<span class="string">&#x27;uuid&#x27;</span>)  </span><br><span class="line">submit.to_csv(<span class="string">&#x27;submit.csv&#x27;</span>, index=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>most_common函数用法<ul>
+<li>List the n most common elements and their counts from the most common to the least. If n is None, then list all element counts. <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Counter(&#x27;abcdeabcdabcaba&#x27;).most_common(3)</span><br><span class="line">[(&#x27;a&#x27;, 5), (&#x27;b&#x27;, 4), (&#x27;c&#x27;, 3)]</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>split函数用法<ul>
+<li>uuid: ‘.&#x2F;脑PET图像分析和疾病预测挑战赛数据集&#x2F;Test\\97.nii’ -&gt; ‘97.nii’-&gt;97</li>
+</ul>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>传统CV关注统计特征的提取和利用，后续可以考虑添加或修改Baseline的统计特征，并设置更合理的分类器或许能够改善效果，正如建议中给出：</p>
+<blockquote>
+<p>在<code>scikit-learn</code>（sklearn）中，除了逻辑回归（Logistic Regression）之外，还有许多其他的机器学习模型可以用于分类任务中，以下是一些常用于分类任务的机器学习模型：</p>
+<ol>
+<li>支持向量机（Support Vector Machines，SVM）：用于二分类和多分类问题，通过构建一个超平面来区分不同类别的样本。  </li>
+<li>决策树（Decision Trees）：适用于二分类和多分类问题，通过对特征空间进行划分来分类样本。</li>
+<li>随机森林（Random Forests）：基于多个决策树的集成算法，用于二分类和多分类问题，提高了模型的泛化能力。  </li>
+<li>K最近邻算法（K-Nearest Neighbors，KNN）：根据最近邻样本的类别来分类新样本，适用于二分类和多分类问题。  </li>
+<li>朴素贝叶斯（Naive Bayes）：基于贝叶斯定理的分类方法，适用于文本分类等问题。  </li>
+<li>多层感知器（Multi-layer Perceptrons，MLP）：一种人工神经网络，用于解决复杂的分类问题。  </li>
+<li>卷积神经网络（Convolutional Neural Networks，CNN）：专用于处理图像和视觉数据的神经网络，在图像分类任务中表现出色。</li>
+</ol>
+<p> 这些模型在分类任务中有不同的应用场景和性能表现，取决于数据集的特征、样本数量和问题的复杂性。在实际应用中，通常需要根据数据集的特点和具体任务来选择合适的分类模型，并进行模型调参和性能评估，以达到最佳的分类效果。</p>
+</blockquote>
+<h1 id="DL-Baseline精读"><a href="#DL-Baseline精读" class="headerlink" title="DL_Baseline精读"></a>DL_Baseline精读</h1><h2 id="导入必要的包和设置超参数"><a href="#导入必要的包和设置超参数" class="headerlink" title="导入必要的包和设置超参数"></a>导入必要的包和设置超参数</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># glob 读取 + 打乱</span></span><br><span class="line"><span class="keyword">import</span> os, sys, glob, argparse  </span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd  </span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np  </span><br><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> cv2  </span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image  </span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split, StratifiedKFold, KFold  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> torch  </span><br><span class="line">torch.manual_seed(<span class="number">0</span>)  </span><br><span class="line">torch.backends.cudnn.deterministic = <span class="literal">False</span>  </span><br><span class="line">torch.backends.cudnn.benchmark = <span class="literal">True</span>  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> torchvision.models <span class="keyword">as</span> models  </span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms  </span><br><span class="line"><span class="keyword">import</span> torchvision.datasets <span class="keyword">as</span> datasets  </span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn  </span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F  </span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim  </span><br><span class="line"><span class="keyword">from</span> torch.autograd <span class="keyword">import</span> Variable  </span><br><span class="line"><span class="keyword">from</span> torch.utils.data.dataset <span class="keyword">import</span> Dataset  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> nibabel <span class="keyword">as</span> nib  </span><br><span class="line"><span class="keyword">from</span> nibabel.viewers <span class="keyword">import</span> OrthoSlicer3D  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># Linux  </span></span><br><span class="line">train_path = glob.glob(<span class="string">&#x27;./脑PET图像分析和疾病预测挑战赛数据集/Train/*/*&#x27;</span>)  </span><br><span class="line">test_path = glob.glob(<span class="string">&#x27;./脑PET图像分析和疾病预测挑战赛数据集/Test/*&#x27;</span>)  </span><br><span class="line">  </span><br><span class="line">np.random.shuffle(train_path)  </span><br><span class="line">np.random.shuffle(test_path)</span><br></pre></td></tr></table></figure>
+<h2 id="数据的读入和加载"><a href="#数据的读入和加载" class="headerlink" title="数据的读入和加载"></a>数据的读入和加载</h2><p>第一种方式：下载并使用PyTorch提供的内置数据集。只适用于常见的数据集，如MNIST，CIFAR10等，PyTorch官方提供了数据下载。这种方式往往适用于快速测试方法（比如测试下某个idea在MNIST数据集上是否有效）</p>
+<p>第二种方式：从网站下载以csv格式存储的数据，读入并转成预期的格式。需要自己构建Dataset，这对于PyTorch应用于自己的工作中十分重要。</p>
+<p>同时，还需要对数据进行必要的变换，比如说需要将图片统一为一致的大小，以便后续能够输入网络训练；需要将数据格式转为Tensor类，等等。</p>
+<h3 id="Dataset类构建"><a href="#Dataset类构建" class="headerlink" title="Dataset类构建"></a>Dataset类构建</h3><p>对于竞赛，Dataset数据集的构建通常需要自行完成，首先从官网下载数据并保存至本地，而后构建Dataset类。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">DATA_CACHE = &#123;&#125; <span class="comment"># 数据缓存，加速数据加载</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">XunFeiDataset</span>(<span class="title class_ inherited__">Dataset</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, img_path, transform=<span class="literal">None</span></span>):</span><br><span class="line">        self.img_path = img_path</span><br><span class="line">        <span class="keyword">if</span> transform <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            self.transform = transform</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.transform = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, index</span>):</span><br><span class="line">        <span class="keyword">if</span> self.img_path[index] <span class="keyword">in</span> DATA_CACHE:</span><br><span class="line">            img = DATA_CACHE[self.img_path[index]]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            img = nib.load(self.img_path[index])</span><br><span class="line">            img = img.dataobj[:,:,:, <span class="number">0</span>]</span><br><span class="line">            DATA_CACHE[self.img_path[index]] = img</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 随机选择一些通道</span></span><br><span class="line">        idx = np.random.choice(<span class="built_in">range</span>(img.shape[-<span class="number">1</span>]), <span class="number">50</span>)</span><br><span class="line">        img = img[:, :, idx]</span><br><span class="line">        img = img.astype(np.float32)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> self.transform <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            img = self.transform(image = img)[<span class="string">&#x27;image&#x27;</span>]</span><br><span class="line"></span><br><span class="line">        img = img.transpose([<span class="number">2</span>,<span class="number">0</span>,<span class="number">1</span>])</span><br><span class="line">        <span class="keyword">return</span> img,torch.from_numpy(np.array(<span class="built_in">int</span>(<span class="string">&#x27;NC&#x27;</span> <span class="keyword">in</span> self.img_path[index])))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(self.img_path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="数据载入"><a href="#数据载入" class="headerlink" title="数据载入"></a>数据载入</h2><p>在构建训练和测试数据集完成后，需要定义DataLoader类，以便在训练和测试时加载数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> albumentations <span class="keyword">as</span> A</span><br><span class="line"><span class="comment"># 训练集</span></span><br><span class="line">train_loader = torch.utils.data.DataLoader(</span><br><span class="line">    XunFeiDataset(train_path[:-<span class="number">10</span>],</span><br><span class="line">            A.Compose([</span><br><span class="line">            A.RandomRotate90(),</span><br><span class="line">            A.RandomCrop(<span class="number">120</span>, <span class="number">120</span>),</span><br><span class="line">            A.HorizontalFlip(p=<span class="number">0.5</span>),</span><br><span class="line">            A.RandomContrast(p=<span class="number">0.5</span>),</span><br><span class="line">            A.RandomBrightnessContrast(p=<span class="number">0.5</span>),</span><br><span class="line">        ])</span><br><span class="line">    ), batch_size=<span class="number">2</span>, shuffle=<span class="literal">True</span>, num_workers=<span class="number">0</span>, pin_memory=<span class="literal">False</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># 训练过程的评估集(也可以使用test_path下的数据)</span></span><br><span class="line">val_loader = torch.utils.data.DataLoader(</span><br><span class="line">    XunFeiDataset(train_path[-<span class="number">10</span>:],</span><br><span class="line">            A.Compose([</span><br><span class="line">            A.RandomCrop(<span class="number">120</span>, <span class="number">120</span>),</span><br><span class="line">        ])</span><br><span class="line">    ), batch_size=<span class="number">2</span>, shuffle=<span class="literal">False</span>, num_workers=<span class="number">0</span>, pin_memory=<span class="literal">False</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试集</span></span><br><span class="line">test_loader = torch.utils.data.DataLoader(</span><br><span class="line">    XunFeiDataset(test_path,</span><br><span class="line">            A.Compose([</span><br><span class="line">            A.RandomCrop(<span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">            A.HorizontalFlip(p=<span class="number">0.5</span>),</span><br><span class="line">            A.RandomContrast(p=<span class="number">0.5</span>),</span><br><span class="line">        ])</span><br><span class="line">    ), batch_size=<span class="number">2</span>, shuffle=<span class="literal">False</span>, num_workers=<span class="number">0</span>, pin_memory=<span class="literal">False</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>读入后，我们可以做一些数据可视化操作，验证我们读入的数据是否正确</p>
+<h2 id="模型设计"><a href="#模型设计" class="headerlink" title="模型设计"></a>模型设计</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">XunFeiNet</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(XunFeiNet, self).__init__()</span><br><span class="line"></span><br><span class="line">        model = models.resnet18(<span class="literal">True</span>)</span><br><span class="line">        model.conv1 = torch.nn.Conv2d(<span class="number">50</span>, <span class="number">64</span>, kernel_size=(<span class="number">7</span>, <span class="number">7</span>), stride=(<span class="number">2</span>, <span class="number">2</span>), padding=(<span class="number">3</span>, <span class="number">3</span>), bias=<span class="literal">False</span>)</span><br><span class="line">        model.avgpool = nn.AdaptiveAvgPool2d(<span class="number">1</span>)</span><br><span class="line">        model.fc = nn.Linear(<span class="number">512</span>, <span class="number">2</span>)</span><br><span class="line">        self.resnet = model</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, img</span>):</span><br><span class="line">        out = self.resnet(img)</span><br><span class="line">        <span class="keyword">return</span> out</span><br><span class="line"></span><br><span class="line">model = XunFeiNet()</span><br><span class="line">model = model.to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="设置损失函数和优化器"><a href="#设置损失函数和优化器" class="headerlink" title="设置损失函数和优化器"></a>设置损失函数和优化器</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">criterion = nn.CrossEntropyLoss().cuda() <span class="comment"># 交叉熵损失函数</span></span><br><span class="line">optimizer = torch.optim.AdamW(model.parameters(), <span class="number">0.001</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="模型训练与验证"><a href="#模型训练与验证" class="headerlink" title="模型训练与验证"></a>模型训练与验证</h2><p>train和validate各自封装成函数，方便后续调用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Step3：模型训练与验证</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train</span>(<span class="params">train_loader, model, criterion, optimizer</span>):</span><br><span class="line">    model.train()</span><br><span class="line">    train_loss = <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">for</span> i, (<span class="built_in">input</span>, target) <span class="keyword">in</span> <span class="built_in">enumerate</span>(train_loader):</span><br><span class="line">        <span class="built_in">input</span> = <span class="built_in">input</span>.cuda(non_blocking=<span class="literal">True</span>)</span><br><span class="line">        target = target.cuda(non_blocking=<span class="literal">True</span>).long()</span><br><span class="line"></span><br><span class="line">        output = model(<span class="built_in">input</span>)</span><br><span class="line">        loss = criterion(output, target)</span><br><span class="line"></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> i % <span class="number">20</span> == <span class="number">0</span>:</span><br><span class="line">            <span class="built_in">print</span>(loss.item())</span><br><span class="line"></span><br><span class="line">        train_loss += loss.item()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> train_loss/<span class="built_in">len</span>(train_loader)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">validate</span>(<span class="params">val_loader, model, criterion</span>):</span><br><span class="line">    model.<span class="built_in">eval</span>()</span><br><span class="line">    val_acc = <span class="number">0.0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">        <span class="keyword">for</span> i, (<span class="built_in">input</span>, target) <span class="keyword">in</span> <span class="built_in">enumerate</span>(val_loader):</span><br><span class="line">            <span class="built_in">input</span> = <span class="built_in">input</span>.cuda()</span><br><span class="line">            target = target.cuda().long()</span><br><span class="line"></span><br><span class="line">            <span class="comment"># compute output</span></span><br><span class="line">            output = model(<span class="built_in">input</span>)</span><br><span class="line">            loss = criterion(output, target)</span><br><span class="line"></span><br><span class="line">            val_acc += (output.argmax(<span class="number">1</span>) == target).<span class="built_in">sum</span>().item()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> val_acc / <span class="built_in">len</span>(val_loader.dataset)</span><br></pre></td></tr></table></figure>
+<p>执行训练和验证代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">for _  in range(3):</span><br><span class="line">    train_loss = train(train_loader, model, criterion, optimizer)</span><br><span class="line">    val_acc  = validate(val_loader, model, criterion)</span><br><span class="line">    train_acc = validate(train_loader, model, criterion)</span><br><span class="line"></span><br><span class="line">    print(train_loss, train_acc, val_acc)</span><br></pre></td></tr></table></figure>
+<h2 id="模型的预测与提交"><a href="#模型的预测与提交" class="headerlink" title="模型的预测与提交"></a>模型的预测与提交</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># step4 模型的预测与提交</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">test_loader, model, criterion</span>):</span><br><span class="line">    model.<span class="built_in">eval</span>()</span><br><span class="line">    val_acc = <span class="number">0.0</span></span><br><span class="line"></span><br><span class="line">    test_pred = []</span><br><span class="line">    <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">        <span class="keyword">for</span> i, (<span class="built_in">input</span>, target) <span class="keyword">in</span> <span class="built_in">enumerate</span>(test_loader):</span><br><span class="line">            <span class="built_in">input</span> = <span class="built_in">input</span>.cuda()</span><br><span class="line">            target = target.cuda()</span><br><span class="line"></span><br><span class="line">            output = model(<span class="built_in">input</span>)</span><br><span class="line">            test_pred.append(output.data.cpu().numpy())</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> np.vstack(test_pred)</span><br><span class="line"></span><br><span class="line">pred = <span class="literal">None</span></span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    <span class="keyword">if</span> pred <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        pred = predict(test_loader, model, criterion)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        pred += predict(test_loader, model, criterion)</span><br><span class="line"></span><br><span class="line">submit = pd.DataFrame(</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment"># linux</span></span><br><span class="line">        <span class="comment"># &#x27;uuid&#x27;: [int(x.split(&#x27;/&#x27;)[-1][:-4]) for x in test_path],</span></span><br><span class="line">        <span class="comment"># Windows</span></span><br><span class="line">        <span class="string">&#x27;uuid&#x27;</span>: [<span class="built_in">int</span>(x.split(<span class="string">&#x27;\\&#x27;</span>)[-<span class="number">1</span>][:-<span class="number">4</span>]) <span class="keyword">for</span> x <span class="keyword">in</span> test_path],</span><br><span class="line">        <span class="string">&#x27;label&#x27;</span>: pred.argmax(<span class="number">1</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">submit[<span class="string">&#x27;label&#x27;</span>] = submit[<span class="string">&#x27;label&#x27;</span>].<span class="built_in">map</span>(&#123;<span class="number">1</span>:<span class="string">&#x27;NC&#x27;</span>, <span class="number">0</span>: <span class="string">&#x27;MCI&#x27;</span>&#125;)</span><br><span class="line">submit = submit.sort_values(by=<span class="string">&#x27;uuid&#x27;</span>)</span><br><span class="line">submit.to_csv(<span class="string">&#x27;submit2.csv&#x27;</span>, index=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
+
+<h1 id="调试过程中的Error"><a href="#调试过程中的Error" class="headerlink" title="调试过程中的Error"></a>调试过程中的Error</h1><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Type</span> <span class="number">1.</span> RuntimeError: <span class="string">&quot;nll_loss_forward_reduce_cuda_kernel_2d_index&quot;</span> <span class="keyword">not</span> implemented <span class="keyword">for</span> <span class="string">&#x27;Int&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="type">Type</span> <span class="number">2</span>: Expected <span class="built_in">object</span> of scalar <span class="built_in">type</span> Long but got scalar <span class="built_in">type</span> Int <span class="keyword">for</span> argument <span class="comment">#2 &#x27;target&#x27; in call to _thnn_nll_loss_forward</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 两种错误类型指向同一种修正方法</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>修正方法：根据错误提示，把两个loss计算的target改成target.long()；</li>
+<li>更多报错指示参考群友【1】<a target="_blank" rel="noopener" href="https://ya4zuvzb4r6.feishu.cn/docx/Mrd5dalXXoJhtFxO1WOc79ijn8g">从零开始的CV学习——Datawhale视觉夏令营学习笔记1 - 飞书云文档 (feishu.cn)</a></li>
+</ul>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://datawhaler.feishu.cn/docx/GYg7dZEPQozhXHx8n4ScQlwZnzd">Datawhale Baseline Docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.pynote.net/archives/852">glob模块使用教程 | Python笔记 (pynote.net)</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/581440554">Python glob函数用法 - 知乎 (zhihu.com)</a></li>
+<li><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/datawhalechina/thorough-pytorch/tree/main/notebook/%E7%AC%AC%E5%9B%9B%E7%AB%A0%20PyTorch%E5%9F%BA%E7%A1%80%E5%AE%9E%E6%88%98">DataWhale教程 PyTorch基础实战</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="建议"><a href="#建议" class="headerlink" title="建议"></a>建议</h1><h2 id="建议四"><a href="#建议四" class="headerlink" title="建议四:"></a>建议四:</h2><p>尝试理解baseline，并进行改进。这点承接建议一，在完成建议一之后马上进行。理解baseline之后，找到觉得可以优化的地方。然后，将自己的理解付诸实践，这才算是真正在提升代码能力。像DL这样的代码模式，其实非常容易形成自用的模板。改出一套自己熟悉的比赛模板是非常实在且高效的事情，一个DL的模板应该包括:</p>
+<ul>
+<li>模型文件夹(放着自己常用的model及其预训练pth)</li>
+<li>dataset文件夹(放比赛dataset的)</li>
+<li>训练脚本(重点!!不同人习惯不同的训练脚本，能把别人的算法移植到自己的脚本也是一种本事。内容可扩展:数据增强模式、提升性能的算法(LS、自蒸馅等)、加载预训练模型、早停、tensorboard等等等等)</li>
+<li>report文件夹(可以是打印训练结果的txt、也可以是tensorboard文件)处理数据的脚本(切分数据为训练集和验证集的脚本，生成均衡样本数的脚本)。<br>在有了自己熟悉的DL范式之后，打比赛就如鱼得水啦。<br>参考群友福师大提供的建议</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/07/22/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84CV%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94Datawhale%E8%A7%86%E8%A7%89%E5%A4%8F%E4%BB%A4%E8%90%A5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/" data-id="clkdyq8ze0001gwuj0gos7liu" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-bolgname" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/07/22/bolgname/" class="article-date">
+  <time class="dt-published" datetime="2023-07-22T11:56:27.000Z" itemprop="datePublished">2023-07-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/07/22/bolgname/">bolgname</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/07/22/bolgname/" data-id="clkdyq8za0000gwuj1w345j87" data-title="bolgname" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/07/22/hello-world/" class="article-date">
+  <time class="dt-published" datetime="2023-07-22T11:50:19.983Z" itemprop="datePublished">2023-07-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/07/22/hello-world/">Hello World</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/07/22/hello-world/" data-id="clkdybgu900002suj6roc0wdj" data-title="Hello World" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/07/22/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84CV%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94Datawhale%E8%A7%86%E8%A7%89%E5%A4%8F%E4%BB%A4%E8%90%A5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/07/22/bolgname/">bolgname</a>
+          </li>
+        
+          <li>
+            <a href="/2023/07/22/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
