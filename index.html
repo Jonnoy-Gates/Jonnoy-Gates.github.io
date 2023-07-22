@@ -75,10 +75,14 @@
   
     <article id="post-从零开始的CV项目实战——Datawhale视觉夏令营学习笔记1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2023/07/22/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84CV%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94Datawhale%E8%A7%86%E8%A7%89%E5%A4%8F%E4%BB%A4%E8%90%A5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/" class="article-date">
-  <time class="dt-published" datetime="2023-07-22T12:00:00.000Z" itemprop="datePublished">2023-07-22</time>
+    <a href="/2022/07/02/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84CV%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94Datawhale%E8%A7%86%E8%A7%89%E5%A4%8F%E4%BB%A4%E8%90%A5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/" class="article-date">
+  <time class="dt-published" datetime="2022-07-02T12:41:51.000Z" itemprop="datePublished">2022-07-02</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E9%BB%98%E8%AE%A4%E5%88%86%E7%B1%BB/">默认分类</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -87,7 +91,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2023/07/22/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84CV%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94Datawhale%E8%A7%86%E8%A7%89%E5%A4%8F%E4%BB%A4%E8%90%A5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/">从零开始的CV项目实战——Datawhale视觉夏令营学习笔记1</a>
+      <a class="p-name article-title" href="/2022/07/02/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84CV%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94Datawhale%E8%A7%86%E8%A7%89%E5%A4%8F%E4%BB%A4%E8%90%A5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/">从零开始的CV项目实战——Datawhale视觉夏令营学习笔记1</a>
     </h1>
   
 
@@ -164,7 +168,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">DATA_CACHE = &#123;&#125; <span class="comment"># 数据缓存，加速数据加载</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">XunFeiDataset</span>(<span class="title class_ inherited__">Dataset</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, img_path, transform=<span class="literal">None</span></span>):</span><br><span class="line">        self.img_path = img_path</span><br><span class="line">        <span class="keyword">if</span> transform <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            self.transform = transform</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.transform = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, index</span>):</span><br><span class="line">        <span class="keyword">if</span> self.img_path[index] <span class="keyword">in</span> DATA_CACHE:</span><br><span class="line">            img = DATA_CACHE[self.img_path[index]]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            img = nib.load(self.img_path[index])</span><br><span class="line">            img = img.dataobj[:,:,:, <span class="number">0</span>]</span><br><span class="line">            DATA_CACHE[self.img_path[index]] = img</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 随机选择一些通道</span></span><br><span class="line">        idx = np.random.choice(<span class="built_in">range</span>(img.shape[-<span class="number">1</span>]), <span class="number">50</span>)</span><br><span class="line">        img = img[:, :, idx]</span><br><span class="line">        img = img.astype(np.float32)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> self.transform <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            img = self.transform(image = img)[<span class="string">&#x27;image&#x27;</span>]</span><br><span class="line"></span><br><span class="line">        img = img.transpose([<span class="number">2</span>,<span class="number">0</span>,<span class="number">1</span>])</span><br><span class="line">        <span class="keyword">return</span> img,torch.from_numpy(np.array(<span class="built_in">int</span>(<span class="string">&#x27;NC&#x27;</span> <span class="keyword">in</span> self.img_path[index])))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(self.img_path)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <h2 id="数据载入"><a href="#数据载入" class="headerlink" title="数据载入"></a>数据载入</h2><p>在构建训练和测试数据集完成后，需要定义DataLoader类，以便在训练和测试时加载数据</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> albumentations <span class="keyword">as</span> A</span><br><span class="line"><span class="comment"># 训练集</span></span><br><span class="line">train_loader = torch.utils.data.DataLoader(</span><br><span class="line">    XunFeiDataset(train_path[:-<span class="number">10</span>],</span><br><span class="line">            A.Compose([</span><br><span class="line">            A.RandomRotate90(),</span><br><span class="line">            A.RandomCrop(<span class="number">120</span>, <span class="number">120</span>),</span><br><span class="line">            A.HorizontalFlip(p=<span class="number">0.5</span>),</span><br><span class="line">            A.RandomContrast(p=<span class="number">0.5</span>),</span><br><span class="line">            A.RandomBrightnessContrast(p=<span class="number">0.5</span>),</span><br><span class="line">        ])</span><br><span class="line">    ), batch_size=<span class="number">2</span>, shuffle=<span class="literal">True</span>, num_workers=<span class="number">0</span>, pin_memory=<span class="literal">False</span></span><br><span class="line">)</span><br><span class="line"><span class="comment"># 训练过程的评估集(也可以使用test_path下的数据)</span></span><br><span class="line">val_loader = torch.utils.data.DataLoader(</span><br><span class="line">    XunFeiDataset(train_path[-<span class="number">10</span>:],</span><br><span class="line">            A.Compose([</span><br><span class="line">            A.RandomCrop(<span class="number">120</span>, <span class="number">120</span>),</span><br><span class="line">        ])</span><br><span class="line">    ), batch_size=<span class="number">2</span>, shuffle=<span class="literal">False</span>, num_workers=<span class="number">0</span>, pin_memory=<span class="literal">False</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试集</span></span><br><span class="line">test_loader = torch.utils.data.DataLoader(</span><br><span class="line">    XunFeiDataset(test_path,</span><br><span class="line">            A.Compose([</span><br><span class="line">            A.RandomCrop(<span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">            A.HorizontalFlip(p=<span class="number">0.5</span>),</span><br><span class="line">            A.RandomContrast(p=<span class="number">0.5</span>),</span><br><span class="line">        ])</span><br><span class="line">    ), batch_size=<span class="number">2</span>, shuffle=<span class="literal">False</span>, num_workers=<span class="number">0</span>, pin_memory=<span class="literal">False</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>读入后，我们可以做一些数据可视化操作，验证我们读入的数据是否正确</p>
+<p>读入后，我们可以做一些数据可视化操作，验证我们读入的数据是否正确。【待完成】</p>
 <h2 id="模型设计"><a href="#模型设计" class="headerlink" title="模型设计"></a>模型设计</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">XunFeiNet</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(XunFeiNet, self).__init__()</span><br><span class="line"></span><br><span class="line">        model = models.resnet18(<span class="literal">True</span>)</span><br><span class="line">        model.conv1 = torch.nn.Conv2d(<span class="number">50</span>, <span class="number">64</span>, kernel_size=(<span class="number">7</span>, <span class="number">7</span>), stride=(<span class="number">2</span>, <span class="number">2</span>), padding=(<span class="number">3</span>, <span class="number">3</span>), bias=<span class="literal">False</span>)</span><br><span class="line">        model.avgpool = nn.AdaptiveAvgPool2d(<span class="number">1</span>)</span><br><span class="line">        model.fc = nn.Linear(<span class="number">512</span>, <span class="number">2</span>)</span><br><span class="line">        self.resnet = model</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, img</span>):</span><br><span class="line">        out = self.resnet(img)</span><br><span class="line">        <span class="keyword">return</span> out</span><br><span class="line"></span><br><span class="line">model = XunFeiNet()</span><br><span class="line">model = model.to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <h2 id="设置损失函数和优化器"><a href="#设置损失函数和优化器" class="headerlink" title="设置损失函数和优化器"></a>设置损失函数和优化器</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">criterion = nn.CrossEntropyLoss().cuda() <span class="comment"># 交叉熵损失函数</span></span><br><span class="line">optimizer = torch.optim.AdamW(model.parameters(), <span class="number">0.001</span>)</span><br></pre></td></tr></table></figure>
 <h2 id="模型训练与验证"><a href="#模型训练与验证" class="headerlink" title="模型训练与验证"></a>模型训练与验证</h2><p>train和validate各自封装成函数，方便后续调用</p>
@@ -188,11 +192,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/07/22/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84CV%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94Datawhale%E8%A7%86%E8%A7%89%E5%A4%8F%E4%BB%A4%E8%90%A5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/" data-id="clkdzffec0000ysuj4cq1dia5" data-title="从零开始的CV项目实战——Datawhale视觉夏令营学习笔记1" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2022/07/02/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84CV%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94Datawhale%E8%A7%86%E8%A7%89%E5%A4%8F%E4%BB%A4%E8%90%A5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/" data-id="clkdzsxxp00005oujhl5m5jgj" data-title="从零开始的CV项目实战——Datawhale视觉夏令营学习笔记1" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/2307-DatawhaleCV%E5%A4%8F%E4%BB%A4%E8%90%A5/" rel="tag">2307-DatawhaleCV夏令营</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tag1/" rel="tag">tag1</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tag2/" rel="tag">tag2</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tag3/" rel="tag">tag3</a></li></ul>
 
     </footer>
   </div>
@@ -209,13 +213,20 @@
           <aside id="sidebar">
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%BB%98%E8%AE%A4%E5%88%86%E7%B1%BB/">默认分类</a></li></ul>
+    </div>
+  </div>
+
 
   
     
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/2307-DatawhaleCV%E5%A4%8F%E4%BB%A4%E8%90%A5/" rel="tag">2307-DatawhaleCV夏令营</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/tag1/" rel="tag">tag1</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tag2/" rel="tag">tag2</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tag3/" rel="tag">tag3</a></li></ul>
     </div>
   </div>
 
@@ -225,7 +236,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/2307-DatawhaleCV%E5%A4%8F%E4%BB%A4%E8%90%A5/" style="font-size: 10px;">2307-DatawhaleCV夏令营</a>
+      <a href="/tags/tag1/" style="font-size: 10px;">tag1</a> <a href="/tags/tag2/" style="font-size: 10px;">tag2</a> <a href="/tags/tag3/" style="font-size: 10px;">tag3</a>
     </div>
   </div>
 
@@ -234,7 +245,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li></ul>
     </div>
   </div>
 
@@ -247,7 +258,7 @@
       <ul>
         
           <li>
-            <a href="/2023/07/22/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84CV%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94Datawhale%E8%A7%86%E8%A7%89%E5%A4%8F%E4%BB%A4%E8%90%A5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/">从零开始的CV项目实战——Datawhale视觉夏令营学习笔记1</a>
+            <a href="/2022/07/02/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84CV%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E2%80%94%E2%80%94Datawhale%E8%A7%86%E8%A7%89%E5%A4%8F%E4%BB%A4%E8%90%A5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/">从零开始的CV项目实战——Datawhale视觉夏令营学习笔记1</a>
           </li>
         
       </ul>
